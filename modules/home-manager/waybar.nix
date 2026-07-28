@@ -7,6 +7,22 @@ inputs: {
   convert = inputs.nix-colors.lib.conversions.hexToRGBString;
   backgroundRgb = "rgb(${convert ", " palette.base00})";
   foregroundRgb = "rgb(${convert ", " palette.base05})";
+
+  # Prints the local time, but only when the local UTC offset differs from both
+  # the UK and UAE clocks shown elsewhere on the bar. Comparing offsets (not
+  # zone names) is what we want: if the offset matches, the displayed HH:MM is
+  # identical anyway, so there is nothing extra to show and the empty output
+  # makes waybar hide the module.
+  localtimeScript = pkgs.writeShellScript "waybar-localtime" ''
+    date=${pkgs.coreutils}/bin/date
+    off_local=$("$date" +%z)
+    off_uk=$(TZ=Europe/London "$date" +%z)
+    off_uae=$(TZ=Asia/Dubai "$date" +%z)
+    if [ "$off_local" = "$off_uk" ] || [ "$off_local" = "$off_uae" ]; then
+      exit 0
+    fi
+    "$date" '+%Z %H:%M'
+  '';
 in {
   home.file = {
     ".config/waybar/" = {
@@ -41,6 +57,7 @@ in {
         modules-center = [
           "clock#uk"
           "clock#uae"
+          "custom/localtime"
         ];
         modules-right = [
           # "custom/dropbox"
@@ -93,6 +110,13 @@ in {
           timezone = "Asia/Dubai";
           format = "UAE {:%H:%M}";
           format-alt = "UAE {:%a %d %b}";
+          tooltip = false;
+        };
+        # Local time, shown only when it differs from both UK and UAE.
+        "custom/localtime" = {
+          exec = "${localtimeScript}";
+          interval = 30;
+          format = "{}";
           tooltip = false;
         };
         network = {
