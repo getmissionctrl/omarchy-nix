@@ -25,14 +25,16 @@ in {
     "$webapp" = lib.mkDefault "$browser --app";
 
     monitor = cfg.monitors;
-
-    # Optionally load a monitor layout written by an external tool such as
-    # nwg-displays (~/.config/hypr/monitors.conf). A glob is used so that a
-    # missing file is silently ignored (a literal `source` to an absent file
-    # is a Hyprland config error). Because "source" sorts after "monitor" in
-    # the generated config, these directives override `cfg.monitors` above
-    # whenever the file is present, letting the GUI own the live layout while
-    # `cfg.monitors` remains the declarative fallback.
-    source = [ "~/.config/hypr/monitors*.conf" ];
   };
+
+  # Optionally load a monitor layout written by an external tool such as
+  # nwg-displays (~/.config/hypr/monitors.conf). Appended via extraConfig with
+  # mkAfter so it lands at the very end of hyprland.conf, after the `monitor`
+  # defaults above — Hyprland inlines a sourced file where the directive
+  # appears, so a later `monitor=` overrides the earlier one, letting the GUI
+  # own the live layout while `cfg.monitors` stays the declarative fallback.
+  # The glob makes a missing file a silent no-op rather than a config error.
+  wayland.windowManager.hyprland.extraConfig = lib.mkAfter ''
+    source = ~/.config/hypr/monitors*.conf
+  '';
 }
