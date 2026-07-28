@@ -39,7 +39,8 @@ in {
           "hyprland/workspaces"
         ];
         modules-center = [
-          "clock"
+          "clock#uk"
+          "clock#uae"
         ];
         modules-right = [
           # "custom/dropbox"
@@ -80,9 +81,18 @@ in {
           format = "󰍛";
           on-click = "ghostty -e btop";
         };
-        clock = {
-          format = "{:%A %I:%M %p}";
-          format-alt = "{:%d %B W%V %Y}";
+        # Two fixed-timezone clocks so both UK and UAE time are always visible,
+        # independent of the system timezone. Click either to toggle to a date.
+        "clock#uk" = {
+          timezone = "Europe/London";
+          format = "UK {:%H:%M}";
+          format-alt = "UK {:%a %d %b}";
+          tooltip = false;
+        };
+        "clock#uae" = {
+          timezone = "Asia/Dubai";
+          format = "UAE {:%H:%M}";
+          format-alt = "UAE {:%a %d %b}";
           tooltip = false;
         };
         network = {
