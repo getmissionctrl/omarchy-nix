@@ -45,6 +45,14 @@ in {
 
   programs.waybar = {
     enable = true;
+    # Run waybar as a systemd user service (bound to graphical-session.target)
+    # instead of a fire-and-forget Hyprland `exec`. The exec approach re-ran on
+    # every config reload and, guarded only by `pkill -SIGUSR2 waybar || waybar`,
+    # raced during suspend/resume monitor renegotiation and stacked duplicate
+    # bars. A systemd service is a supervised singleton, so it can't duplicate
+    # and restarts on failure. Config reloads restart it via home-manager
+    # onChange; the SUPER+SHIFT+SPACE toggle (SIGUSR1) still works.
+    systemd.enable = true;
     settings = [
       {
         layer = "top";

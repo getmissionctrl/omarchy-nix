@@ -15,8 +15,8 @@
       # "dropbox-cli start"  # Uncomment to run Dropbox
     ];
 
-    exec = [
-      "pkill -SIGUSR2 waybar || waybar"
-    ];
+    # waybar is started as a systemd user service (programs.waybar.systemd.enable
+    # in waybar.nix), not via a Hyprland exec. Launching it here as well would
+    # spawn a second, unsupervised instance.
   };
 }
