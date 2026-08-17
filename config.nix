@@ -53,6 +53,17 @@ lib: {
       default = 2;
       description = "Display scale factor (1 for 1x displays, 2 for 2x displays)";
     };
+    hyprlock_software_rendering = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Force software (llvmpipe) rendering for hyprlock by launching it with
+        LIBGL_ALWAYS_SOFTWARE=1. Works around intermittent GPU driver aborts
+        (SIGABRT in the Mesa/Gallium render thread) when locking large or
+        high-resolution displays — e.g. AMD APUs driving ultrawide monitors.
+        The lock screen is static, so the CPU-rendering cost is negligible.
+      '';
+    };
     quick_app_bindings = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       description = "A list of single keystroke key bindings to launch common apps.";

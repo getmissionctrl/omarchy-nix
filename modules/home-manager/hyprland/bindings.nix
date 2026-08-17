@@ -18,7 +18,9 @@ in {
         "SUPER, Backspace, killactive,"
 
         # End active session
-        "SUPER, ESCAPE, exec, hyprlock"
+        "SUPER, ESCAPE, exec, ${
+          if cfg.hyprlock_software_rendering then "LIBGL_ALWAYS_SOFTWARE=1 hyprlock" else "hyprlock"
+        }"
         "SUPER SHIFT, ESCAPE, exit,"
         "SUPER CTRL, ESCAPE, exec, reboot"
         "SUPER SHIFT CTRL, ESCAPE, exec, systemctl poweroff"
